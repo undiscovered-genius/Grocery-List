@@ -24,11 +24,11 @@ import com.google.firebase.firestore.Query;
 public class HomeActivity extends AppCompatActivity {
     ImageButton btnLogout;
     ImageButton scan;
-    private RecyclerView mFirestoreList;
+    RecyclerView mFirestoreList;
     FirebaseFirestore firebaseFirestore;
     FirebaseAuth mFirebaseAuth;
     String userid;
-    private FirestoreRecyclerAdapter adapter;
+    FirestoreRecyclerAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,11 +73,9 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-        //query
-        Query query = firebaseFirestore.collection(userid);
+        Query query = firebaseFirestore.collection(userid); //query
         //recycler option
         FirestoreRecyclerOptions<ProductsModel> options= new FirestoreRecyclerOptions.Builder<ProductsModel>().setQuery(query, ProductsModel.class).build();
-
          adapter = new FirestoreRecyclerAdapter<ProductsModel, ProductViewHolder>(options) {
             @NonNull
             @Override
@@ -85,7 +83,6 @@ public class HomeActivity extends AppCompatActivity {
                 View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_single, parent, false);
                 return new ProductViewHolder(view);
             }
-
             @Override
             protected void onBindViewHolder(@NonNull ProductViewHolder holder, int position, @NonNull ProductsModel model) {
                 holder.list_name.setText(model.getName());
@@ -95,27 +92,28 @@ public class HomeActivity extends AppCompatActivity {
         mFirestoreList.setHasFixedSize(true);
         mFirestoreList.setLayoutManager(new LinearLayoutManager(this));
         mFirestoreList.setAdapter(adapter);
-    }
-    //view holder
-    private class ProductViewHolder extends RecyclerView.ViewHolder{
-        private TextView list_name;
-        private  TextView list_quantity;
-
-        public ProductViewHolder(@NonNull View itemView) {
-            super(itemView);
-
-            list_name = itemView.findViewById(R.id.list_name);
-            list_quantity = itemView.findViewById(R.id.list_quantity);
-        }
-    }
-    @Override
-    protected void onStop(){
-        super.onStop();
-        adapter.stopListening();
+//        onStart();
+//        adapter.startListening();
     }
     @Override
     protected void onStart(){
         super.onStart();
         adapter.startListening();
+    }
+    //view holder
+    public class ProductViewHolder extends RecyclerView.ViewHolder{
+        private TextView list_name;
+        private TextView list_quantity;
+        public ProductViewHolder(@NonNull View itemView) {
+            super(itemView);
+            list_name = itemView.findViewById(R.id.list_name);
+            list_quantity = itemView.findViewById(R.id.list_quantity);
+        }
+    }
+
+    @Override
+    protected void onStop(){
+        super.onStop();
+        adapter.stopListening();
     }
 }

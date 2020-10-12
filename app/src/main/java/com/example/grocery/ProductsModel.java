@@ -4,14 +4,15 @@ class ProductsModel {
     private String name;
     private String quantity;
 
-    private  ProductsModel(){}
+    private  ProductsModel(){
+    }
 
     private  ProductsModel(String name, String quantity){
         this.name = name;
         this.quantity = quantity;
     }
 
-    public String getQuantity() {
+     public String getQuantity() {
         return quantity;
     }
 

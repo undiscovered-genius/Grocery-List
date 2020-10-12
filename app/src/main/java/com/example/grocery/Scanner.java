@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -126,13 +127,14 @@ public class Scanner extends AppCompatActivity implements ZXingScannerView.Resul
                 name = itemName.getText().toString();
                 final DocumentReference documentReference= fstore.collection(userid).document(qrcopy);
                 Map<String,Object> user = new HashMap<>();
-                user.put("Product Name  ",name);
-                user.put("Quantity  ",item);
+                user.put("name",name);
+                user.put("quantity",item);
                 documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Toast.makeText(Scanner.this, "ADDED successfully, Thank You!", Toast.LENGTH_SHORT).show();
-                        zXingScannerView.resumeCameraPreview(Scanner.this);
+                        startActivity(new Intent(Scanner.this, HomeActivity.class));
+                        finish();
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
