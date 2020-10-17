@@ -25,6 +25,7 @@ import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -38,6 +39,7 @@ import static java.security.AccessController.getContext;
 public class HomeActivity extends AppCompatActivity {
     ImageButton btnLogout;
     ImageButton scan;
+    ImageButton delete;
     RecyclerView mFirestoreList;
     FirebaseFirestore firebaseFirestore;
     FirebaseAuth mFirebaseAuth;
@@ -56,6 +58,7 @@ public class HomeActivity extends AppCompatActivity {
         firebaseFirestore = FirebaseFirestore.getInstance();
         btnLogout = findViewById(R.id.logout);
         scan = findViewById(R.id.scan);
+        delete = findViewById(R.id.delete);
 
         userid = mFirebaseAuth.getCurrentUser().getUid();
         btnLogout.setOnClickListener(new View.OnClickListener() {
@@ -65,8 +68,7 @@ public class HomeActivity extends AppCompatActivity {
 
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
-                builder.setTitle("LOGOUT?");
-                builder.setMessage("Product Details : ");
+                builder.setTitle("LOGOUT");
                 builder.setMessage("Want to logout ?");
                 builder.setPositiveButton("LOGOUT", new DialogInterface.OnClickListener() {
                     @Override
@@ -82,6 +84,50 @@ public class HomeActivity extends AppCompatActivity {
                     }
                 });
                 builder.create().show();
+            }
+        });
+
+        delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final EditText name;
+                name = new EditText(HomeActivity.this);
+                name.getPaddingLeft();
+                name.setHint(" Product Name");
+                AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                builder.setTitle("DELETE ITEM");
+                builder.setMessage("Product Name : ");
+                builder.setView(name);
+                builder.setPositiveButton("DELETE", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        userid = mFirebaseAuth.getCurrentUser().getUid();
+                        final String item ;
+                        item = name.getText().toString();
+                        final Task<Void> documentReference= firebaseFirestore.collection(userid).document(item).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Toast.makeText(HomeActivity.this, "ITEM  DELETED!", Toast.LENGTH_SHORT).show();
+                                startActivity(new Intent(HomeActivity.this, HomeActivity.class));
+                                finish();
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(HomeActivity.this," Unsuccessful, Please Try Again!" , Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                });
+                builder.setNeutralButton("CANCEL", new DialogInterface.OnClickListener() {
+                    @RequiresApi(api = Build.VERSION_CODES.N)
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
             }
         });
 
@@ -112,14 +158,7 @@ public class HomeActivity extends AppCompatActivity {
                 layout.addView(addItem); // Another add method
 
                 builder.setView(layout);
-                builder.setPositiveButton("CANCEL", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                });
-                builder.setNeutralButton("ADD", new DialogInterface.OnClickListener() {
-                    @RequiresApi(api = Build.VERSION_CODES.N)
+                builder.setPositiveButton("ADD", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         userid = mFirebaseAuth.getCurrentUser().getUid();
@@ -144,6 +183,13 @@ public class HomeActivity extends AppCompatActivity {
                                 Toast.makeText(HomeActivity.this," Unsuccessful, Please Try Again!" , Toast.LENGTH_SHORT).show();
                             }
                         });
+                    }
+                });
+                builder.setNeutralButton("CANCEL", new DialogInterface.OnClickListener() {
+                    @RequiresApi(api = Build.VERSION_CODES.N)
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
                     }
                 });
                 AlertDialog alertDialog = builder.create();
@@ -186,6 +232,13 @@ public class HomeActivity extends AppCompatActivity {
             super(itemView);
             list_name = itemView.findViewById(R.id.list_name);
             list_quantity = itemView.findViewById(R.id.list_quantity);
+
+//            itemView.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//
+//                }
+//            });
         }
     }
 
