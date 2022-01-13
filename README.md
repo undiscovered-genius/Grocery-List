@@ -1,3 +1,5 @@
+[![Views](https://visitor-badge.glitch.me/badge?page_id=undiscovered-genius.undiscovered-genius/Grocery-List)](https://github.com/undiscovered-genius/Grocery-List)
+
 # Grocery-List
  Grocery List android application. Here a user needs to initially login to the app through their email id to get started. One can easily add / remove an item from the list jst by clicking on the icon.
  Better UI.
